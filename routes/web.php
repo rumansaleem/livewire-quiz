@@ -11,6 +11,11 @@
 |
 */
 
+use Illuminate\Support\Facades\Route;
+
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::post('/join-quiz', 'QuizPlayerController@joinByPin')->name('join_quiz');
+Route::post('/quiz_sessions/{quiz}', 'QuizController@play')->name('quiz_sessions.play');
