@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class QuizSession extends Model
 {
-    protected $fillable = ['pin', 'ready_at'];
+    protected $fillable = ['pin', 'ready_at', 'current_question_index'];
 
     protected $casts = [
         'ready_at' => 'datetime'
@@ -33,7 +33,8 @@ class QuizSession extends Model
     {
         return $this->update([
             'ready_at' => now(),
-            'pin' => null
+            'pin' => null,
+            'current_question_index' => 0,
         ]);
     }
 

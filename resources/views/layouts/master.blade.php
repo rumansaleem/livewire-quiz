@@ -10,7 +10,7 @@
         <link rel="stylesheet" href="{{ mix('css/app.css') }}">
         @livewireStyles
     </head>
-    <body class="font-sans antialiased bg-gray-100 text-gray-900">
+    <body class="font-sans antialiased bg-purple-500 text-white">
         @yield('body')
         @include('partials.errors')
         <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.0.1/dist/alpine.js" defer></script>

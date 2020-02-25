@@ -8,46 +8,33 @@ use Livewire\Component;
 
 class PlayQuiz extends Component
 {
-    public $countdown = 10;
-    public $isReady = false;
-    public $secsLeft = 10;
-    public $quizSession;
+    public $session;
     public $question;
+    public $player;
 
     public function render()
     {
         return view('livewire.play-quiz');
     }
 
-    public function isReady()
-    {
-        $this->isReady = $this->quizSession->isReady();
-
-        if ($this->isReady) {
-            $this->countdown();
-        }
-    }
-
-    public function countdown()
-    {
-        $this->secsLeft = now()->diffInSeconds($this->quizSession->ready_at, false) + $this->countdown;
-
-        if ($this->secsLeft <= 0) {
-            $this->secsLeft = 0;
-            $this->loadQuestion();
-        }
-    }
-
     public function loadQuestion()
     {
-        if (! $this->question) {
-            $this->question = $this->quizSession->quiz->questions()->first();
-        }
+        $this->question = $this->session->quiz->questions->get($this->session->current_question_index, null);
+    }
+
+    public function storeAnswer()
+    {
+
     }
 
     public function mount(QuizSession $quizSession)
     {
-        $this->quizSession = $quizSession->load(['players', 'quiz']);
-        $this->isReady();
+        $this->session = $quizSession->load(['quiz']);
+
+        $this->player = $quizSession->players()->whereNickname(
+            session("quiz_sessions.{$this->session->id}.nickname")
+        )->first();
+
+        $this->loadQuestion();
     }
 }

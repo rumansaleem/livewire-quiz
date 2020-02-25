@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Http\Livewire\EnterQuiz;
+use App\Http\Livewire\Home as LivewireHome;
 use App\Quiz;
 use App\QuizPlayer;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -10,7 +10,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Livewire\Livewire;
 use Tests\TestCase;
 
-class EnterQuizTest extends TestCase
+class LivewireQuizTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -21,21 +21,21 @@ class EnterQuizTest extends TestCase
 
         $session = $quiz->startSession($pin = '123456');
 
-        Livewire::test(EnterQuiz::class)
+        Livewire::test(LivewireHome::class)
             ->set('pin', $pin)
             ->call('enter')
             ->assertSee($quiz->title)
             ->assertSee('Ready!')
             ->set('nickname', 'john')
             ->call('ready')
-            ->assertRedirect(route('play', $session));
+            ->assertRedirect(route('quiz.enter', $session));
 
         $this->assertEquals(1, QuizPlayer::count());
         $this->assertEquals('john', QuizPlayer::first()->nickname);
 
 
-        Livewire::test(EnterQuiz::class)
-            ->assertRedirect(route('play', $session));
+        Livewire::test(LivewireHome::class)
+            ->assertRedirect(route('quiz.enter', $session));
 
         $this->assertEquals(1, QuizPlayer::count());
     }

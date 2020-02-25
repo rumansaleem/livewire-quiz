@@ -17,6 +17,7 @@ class CreateQuizSessionsTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('quiz_id');
             $table->string('pin', 8)->unique()->nullable();
+            $table->unsignedTinyInteger('current_question_index')->nullable();
             $table->timestamp('ready_at')->nullable();
             $table->timestamps();
         });

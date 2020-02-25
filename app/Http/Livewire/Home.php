@@ -6,7 +6,7 @@ use App\QuizSession;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 
-class EnterQuiz extends Component
+class Home extends Component
 {
     public $pin = '';
     public $nickname = '';
@@ -14,7 +14,7 @@ class EnterQuiz extends Component
 
     public function render()
     {
-        return view('livewire.enter-quiz');
+        return view('livewire.home');
     }
 
     public function enter()
@@ -39,7 +39,7 @@ class EnterQuiz extends Component
 
         $this->enteredSession->joinAs($this->nickname);
 
-        return redirect()->route('play', $this->enteredSession);
+        return redirect()->route('quiz.enter', $this->enteredSession);
     }
 
     public function mount()
@@ -48,10 +48,10 @@ class EnterQuiz extends Component
             ->where('id', session()->get('active_quiz_session', null))
             ->first();
 
-        if($this->enteredSession && $nickname = session("quiz_session.{$this->enteredSession->id}.nickname")) {
+        if ($this->enteredSession && $nickname = session("quiz_session.{$this->enteredSession->id}.nickname")) {
             $this->enteredSession->joinAs($nickname);
 
-            return redirect()->route('play', $this->enteredSession);
+            return redirect()->route('quiz.enter', $this->enteredSession);
         }
     }
 }
