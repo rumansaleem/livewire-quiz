@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use App\Extentions\ConfigUserProvider;
+use App\User;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
@@ -25,6 +28,8 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        Auth::provider('config', function($app, array $config) {
+            return new ConfigUserProvider($config['password'], $config['name'] ?? null);
+        });
     }
 }
