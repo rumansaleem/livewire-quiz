@@ -13,9 +13,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
+Route::layout('layouts.master')->section('body')->group(function () {
+    Route::livewire('/', 'enter-quiz')->name('enter');
+    Route::livewire('/play/{quizSession}', 'play-quiz')->name('play');
 });
-
-Route::post('/join-quiz', 'QuizPlayerController@joinByPin')->name('join_quiz');
-Route::post('/quiz_sessions/{quiz}', 'QuizController@play')->name('quiz_sessions.play');

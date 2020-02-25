@@ -8,9 +8,13 @@
         <!-- Fonts & Stylesheets -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
         <link rel="stylesheet" href="{{ mix('css/app.css') }}">
-        <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.0.1/dist/alpine.js" defer></script>
+        @livewireStyles
     </head>
     <body class="font-sans antialiased bg-gray-100 text-gray-900">
         @yield('body')
+        @include('partials.errors')
+        <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.0.1/dist/alpine.js" defer></script>
+        @livewireScripts
+        @stack('scripts')
     </body>
 </html>

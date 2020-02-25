@@ -2,29 +2,41 @@
 
 namespace Tests\Feature;
 
+use App\Http\Livewire\EnterQuiz;
+use App\Quiz;
+use App\QuizPlayer;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Livewire\Livewire;
 use Tests\TestCase;
 
-class UserJoinQuizTest extends TestCase
+class EnterQuizTest extends TestCase
 {
     use RefreshDatabase;
 
     /** @test */
     public function user_can_join_the_quiz_by_entering_pin_and_nickname()
     {
-        $quiz = factory('App\Quiz')->create();
+        $quiz = factory(Quiz::class)->create();
 
         $session = $quiz->startSession($pin = '123456');
 
-        $this->withoutExceptionHandling()
-        ->post(route('join_quiz'), [
-            'pin' => $pin,
-            'nickname' => $nickname = 'john',
-        ])->assertRedirect(route('quiz_sessions.play', $session));
+        Livewire::test(EnterQuiz::class)
+            ->set('pin', $pin)
+            ->call('enter')
+            ->assertSee($quiz->title)
+            ->assertSee('Ready!')
+            ->set('nickname', 'john')
+            ->call('ready')
+            ->assertRedirect(route('play', $session));
 
-        $this->assertCount(1, $session->players);
-        $this->assertEquals($nickname, $session->players->first()->nickname);
+        $this->assertEquals(1, QuizPlayer::count());
+        $this->assertEquals('john', QuizPlayer::first()->nickname);
 
+
+        Livewire::test(EnterQuiz::class)
+            ->assertRedirect(route('play', $session));
+
+        $this->assertEquals(1, QuizPlayer::count());
     }
 }

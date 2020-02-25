@@ -2,8 +2,10 @@
 
 namespace Tests\Unit;
 
+use App\Quiz;
 use App\QuizPlayer;
 use App\QuizSession;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -22,6 +24,16 @@ class QuizSessionTest extends TestCase
         $this->assertInstanceOf(QuizPlayer::class, $session->players->first());
     }
 
+    public function test_it_belongs_to_a_quiz()
+    {
+        $quiz = factory(Quiz::class)->create();
+        $session = factory(QuizSession::class)->create(['quiz_id' => $quiz->id]);
+
+        $this->assertInstanceOf(BelongsTo::class, $session->quiz());
+        $this->assertInstanceOf(Quiz::class, $session->quiz);
+        $this->assertEquals($quiz->title, $session->quiz->title);
+    }
+
     public function test_join_as_method()
     {
         $session = factory(QuizSession::class)->create();
@@ -30,5 +42,26 @@ class QuizSessionTest extends TestCase
 
         $this->assertCount(1, $session->fresh()->players);
         $this->assertTrue($player->is($session->fresh()->players->first()));
+    }
+
+    public function test_ready_method_adds_ready_at_clears_pin()
+    {
+        $session = factory(QuizSession::class)->create();
+
+        $session->ready();
+
+        $this->assertEqualsWithDelta(now(), $session->ready_at, 1);
+        $this->assertNull($session->pin);
+    }
+
+    public function test_is_ready_method()
+    {
+        $session = factory(QuizSession::class)->create();
+
+        $this->assertFalse($session->isReady());
+
+        $session->ready();
+
+        $this->assertTrue($session->isReady());
     }
 }
