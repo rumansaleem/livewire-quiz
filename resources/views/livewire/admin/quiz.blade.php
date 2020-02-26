@@ -11,7 +11,7 @@
         </div>
     </div>
     <div class="my-6">
-        <button wire:click="ready"
+        <button wire:click="start"
             class="px-4 py-2 font-bold bg-purple-700 text-white rounded text-xl">
             Ready!
         </button>

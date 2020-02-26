@@ -19,6 +19,19 @@ class Quiz extends Model
         return $this->hasMany(QuizSession::class, 'quiz_id');
     }
 
+    public function freshSession()
+    {
+        return $this->belongsTo(QuizSession::class, 'fresh_quiz_session_id');
+    }
+
+    public function scopeWithFreshSession($query)
+    {
+        return $query->addSelect([
+            'fresh_quiz_session_id' => QuizSession::select('id')
+                ->whereColumn('quiz_id', 'id')->fresh()->limit(1)
+        ])->with('freshSession');
+    }
+
     public function questions()
     {
         return $this->hasMany(Question::class, 'quiz_id');

@@ -44,11 +44,14 @@ class Home extends Component
 
     public function mount()
     {
-        $this->enteredSession = QuizSession::with('quiz')
-            ->where('id', session()->get('active_quiz_session', null))
-            ->first();
+        if (session()->has('active_quiz_session')) {
+            $this->enteredSession = QuizSession::with('quiz')
+                ->where('id', session()->get('active_quiz_session'))
+                ->first();
+        }
 
         if ($this->enteredSession && $nickname = session("quiz_session.{$this->enteredSession->id}.nickname")) {
+            $this->nickname = $nickname;
             $this->enteredSession->joinAs($nickname);
 
             return redirect()->route('quiz.enter', $this->enteredSession);

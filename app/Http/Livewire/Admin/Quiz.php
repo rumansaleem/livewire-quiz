@@ -19,9 +19,9 @@ class Quiz extends Component
         $this->session->load('players');
     }
 
-    public function ready()
+    public function start()
     {
-        $this->session->ready();
+        $this->session->start();
 
         return redirect()->route('admin.quiz.play', $this->session);
     }
@@ -30,7 +30,7 @@ class Quiz extends Component
     {
         $this->session = $quizSession;
 
-        if ($this->session->isReady()) {
+        if ($this->session->isActive()) {
             return redirect()->route('admin.quiz.play', $this->session);
         }
     }

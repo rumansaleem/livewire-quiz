@@ -12,7 +12,7 @@ class Home extends Component
     public function render()
     {
         return view('livewire.admin.home', [
-            'quizzes' => Quiz::all()
+            'quizzes' => Quiz::withFreshSession()->get()
         ]);
     }
 

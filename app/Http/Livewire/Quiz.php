@@ -14,9 +14,9 @@ class Quiz extends Component
         return view('livewire.quiz');
     }
 
-    public function redirectIfReady()
+    public function redirectIfActive()
     {
-        if($this->session->isReady()) {
+        if ($this->session->isActive()) {
             return redirect()->route('quiz.play', $this->session);
         }
     }
@@ -29,6 +29,6 @@ class Quiz extends Component
     public function mount(QuizSession $quizSession)
     {
         $this->session = $quizSession->load(['players', 'quiz']);
-        $this->redirectIfReady();
+        $this->redirectIfActive();
     }
 }

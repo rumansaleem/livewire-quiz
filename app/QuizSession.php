@@ -6,11 +6,30 @@ use Illuminate\Database\Eloquent\Model;
 
 class QuizSession extends Model
 {
-    protected $fillable = ['pin', 'ready_at', 'current_question_index'];
+    protected $fillable = ['pin', 'started_at', 'ended_at', 'current_question_index'];
 
     protected $casts = [
-        'ready_at' => 'datetime'
+        'started_at' => 'datetime',
+        'ended_at' => 'datetime',
     ];
+
+    public function scopeActive($query)
+    {
+        return $query->where('started_at', '<=', now())
+            ->whereNull('ended_at');
+    }
+
+    public function scopeFresh($query)
+    {
+        return $query->whereNull('started_at')
+            ->whereNull('ended_at');
+    }
+
+    public function scopeStale($query)
+    {
+        return $query->whereNotNull('started_at')
+            ->where('ended_at', '<', now());
+    }
 
     public function joinAs($nickname)
     {
@@ -29,17 +48,18 @@ class QuizSession extends Model
         return $this->belongsTo(Quiz::class);
     }
 
-    public function ready()
+    public function start()
     {
         return $this->update([
-            'ready_at' => now(),
+            'started_at' => now(),
             'pin' => null,
             'current_question_index' => 0,
         ]);
     }
 
-    public function isReady()
+    public function isActive()
     {
-        return $this->ready_at != null && $this->ready_at < now();
+        return $this->started_at <= now() &&
+            ! $this->ended_at;
     }
 }
