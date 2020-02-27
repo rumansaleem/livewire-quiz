@@ -26,6 +26,11 @@ class Question extends Model
         return $this->belongsTo(Quiz::class);
     }
 
+    public function responses()
+    {
+        return $this->hasMany(QuestionResponse::class, 'question_id');
+    }
+
     public function isCorrect($key)
     {
         return $this->correct_key === $key;

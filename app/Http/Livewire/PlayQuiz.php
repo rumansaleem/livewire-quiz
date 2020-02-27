@@ -10,6 +10,7 @@ class PlayQuiz extends Component
 {
     public $session;
     public $question;
+    public $response;
     public $player;
 
     public function render()
@@ -20,11 +21,12 @@ class PlayQuiz extends Component
     public function loadQuestion()
     {
         $this->question = $this->session->quiz->questions->get($this->session->current_question_index, null);
+        $this->response = $this->player->responses()->where('question_id', $this->question->id)->first();
     }
 
-    public function storeAnswer()
+    public function storeAnswer($answerKey)
     {
-
+        $this->response = $this->player->respond($this->question, $answerKey);
     }
 
     public function mount(QuizSession $quizSession)

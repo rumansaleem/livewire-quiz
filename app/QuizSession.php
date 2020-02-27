@@ -34,7 +34,7 @@ class QuizSession extends Model
     public function joinAs($nickname)
     {
         return tap($this->players()->firstOrCreate(['nickname' => $nickname]), function($player) {
-            session()->put("quiz_session.{$this->id}.nickname", $player->nickname);
+            session()->put("quiz_sessions.{$this->id}.nickname", $player->nickname);
         });
     }
 
@@ -59,7 +59,7 @@ class QuizSession extends Model
 
     public function isActive()
     {
-        return $this->started_at <= now() &&
-            ! $this->ended_at;
+        return $this->started_at && $this->started_at <= now()
+            && ! $this->ended_at;
     }
 }
