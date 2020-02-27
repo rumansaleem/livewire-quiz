@@ -2,12 +2,16 @@
 
 namespace App\Http\Livewire;
 
+use App\PlayerSession;
 use App\QuizSession;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Redis;
 use Livewire\Component;
 
 class PlayQuiz extends Component
 {
+    use AuthorizesRequests;
+
     public $session;
     public $question;
     public $response;
@@ -31,10 +35,12 @@ class PlayQuiz extends Component
 
     public function mount(QuizSession $quizSession)
     {
+        $this->authorize('play', $quizSession);
+
         $this->session = $quizSession->load(['quiz']);
 
         $this->player = $quizSession->players()->whereNickname(
-            session("quiz_sessions.{$this->session->id}.nickname")
+            PlayerSession::nickname()
         )->first();
 
         $this->loadQuestion();

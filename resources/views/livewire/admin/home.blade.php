@@ -9,18 +9,28 @@
     </div>
     <h2 class="self-start text-xl font-bold mb-4">Quizzes</h2>
     @forelse($quizzes as $quiz)
-        <div class="w-full bg-white text-gray-900 py-3 px-6 rounded border shadow flex items-baseline">
-            <h3 class="text-lg font-bold mr-3">{{ $quiz->title }}</h3>
+        <div class="w-full bg-white text-gray-900 py-3 px-6 rounded border shadow relative">
+            <h3 class="text-lg font-bold pr-12">{{ $quiz->title }}</h3>
             @if( ! $quiz->freshSession)
             <button wire:click="startSession({{ $quiz->id }})"
-                class="ml-auto px-2 py-1 text-sm rounded bg-blue-500 hover:bg-blue-700 text-white font-bold">
+                class="absolute right-0 top-0 mr-3 mt-3 px-2 py-1 text-sm rounded bg-blue-500 hover:bg-blue-700 text-white font-bold">
                 Start
             </button>
             @else
+            <p class="mt-2">
                 <a href="{{ route('admin.quiz.start', $quiz->freshSession) }}"
                     class="ml-auto px-2 py-1 text-sm rounded bg-blue-500 hover:bg-blue-700 text-white font-bold">
                     Resume
                 </a>
+                <button wire:click="abandonAndStartNewSession({{ $quiz->id }}, {{ $quiz->freshSession->id }})"
+                    class="ml-2 px-2 py-1 text-sm rounded bg-orange-500 hover:bg-orange-700 text-white font-bold">
+                    Abandon and Start New
+                </button>
+                <button wire:click="discardSession({{ $quiz->freshSession->id }})"
+                    class="ml-2 px-2 py-1 text-sm rounded bg-red-500 hover:bg-red-700 text-white font-bold">
+                    Discard
+                </button>
+            </p>
             @endif
         </div>
     @empty

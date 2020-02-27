@@ -1,5 +1,7 @@
 <?php
 
+use App\QuizSession;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 
 Route::layout('layouts.master')->section('body')->group(function () {

@@ -34,7 +34,7 @@ class QuizSession extends Model
     public function joinAs($nickname)
     {
         return tap($this->players()->firstOrCreate(['nickname' => $nickname]), function($player) {
-            session()->put("quiz_sessions.{$this->id}.nickname", $player->nickname);
+            PlayerSession::nickname($player->nickname);
         });
     }
 

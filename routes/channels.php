@@ -11,6 +11,13 @@
 |
 */
 
-Broadcast::channel('App.User.{id}', function ($user, $id) {
-    return (int) $user->id === (int) $id;
+use App\PlayerSession;
+use Illuminate\Support\Facades\Broadcast;
+
+Broadcast::channel('Quiz.{quizSessionId}', function ($user = null, $quizSessionId) {
+    return (int) PlayerSession::id() === (int) $quizSessionId;
+});
+
+Broadcast::channel('Admin.Quiz.{quizSessionId}', function ($user, $quizSessionId) {
+    return !! $user;
 });

@@ -21,7 +21,8 @@ class CreateQuizPlayersTable extends Migration
             $table->timestamps();
 
             $table->unique(['quiz_session_id', 'nickname']);
-            $table->foreign('quiz_session_id')->references('id')->on('quiz_sessions');
+            $table->foreign('quiz_session_id')->references('id')->on('quiz_sessions')
+                ->onDelete('cascade');
         });
     }
 

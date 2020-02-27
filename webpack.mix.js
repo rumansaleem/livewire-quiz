@@ -15,16 +15,17 @@ require('laravel-mix-purgecss');
 |
 */
 
-mix.postCss('resources/css/app.css', 'public/css')
-    .options({
-        postCss: [
-            postcssImport(),
-            tailwind('./tailwind.config.js'),
-            postcssNesting()
-        ]
-    })
-    .purgeCss();
+mix.js('resources/js/app.js', 'public/js')
+  .postCss('resources/css/app.css', 'public/css')
+  .options({
+      postCss: [
+          postcssImport(),
+          tailwind('./tailwind.config.js'),
+          postcssNesting()
+      ]
+  })
+  .purgeCss();
 
 if(mix.inProduction) {
-    mix.version();
+  mix.version();
 }

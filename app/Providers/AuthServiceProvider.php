@@ -2,7 +2,12 @@
 
 namespace App\Providers;
 
+use App\Events\PlayerJoined;
 use App\Extentions\ConfigUserProvider;
+use App\PlayerSession;
+use App\Policies\QuizSessionPolicy;
+use App\QuizPlayer;
+use App\QuizSession;
 use App\User;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +21,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-        // 'App\Model' => 'App\Policies\ModelPolicy',
+        QuizSession::class => QuizSessionPolicy::class,
     ];
 
     /**
@@ -31,5 +36,6 @@ class AuthServiceProvider extends ServiceProvider
         Auth::provider('config', function($app, array $config) {
             return new ConfigUserProvider($config['password'], $config['name'] ?? null);
         });
+
     }
 }

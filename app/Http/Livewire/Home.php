@@ -2,7 +2,10 @@
 
 namespace App\Http\Livewire;
 
+use App\Events\PlayerJoined;
+use App\PlayerSession;
 use App\QuizSession;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 
@@ -24,7 +27,8 @@ class Home extends Component
         ]);
 
         $this->enteredSession = QuizSession::with('quiz')->where('pin', $this->pin)->first();
-        session()->put('active_quiz_session', $this->enteredSession->id);
+
+        PlayerSession::id($this->enteredSession->id);
     }
 
     public function ready()
@@ -37,23 +41,26 @@ class Home extends Component
             ]
         ]);
 
-        $this->enteredSession->joinAs($this->nickname);
+        $player = $this->enteredSession->joinAs($this->nickname);
+
+        event(new PlayerJoined($player, $this->enteredSession));
 
         return redirect()->route('quiz.enter', $this->enteredSession);
     }
 
     public function mount()
     {
-        if (session()->has('active_quiz_session')) {
+        if (PlayerSession::id()) {
             $this->enteredSession = QuizSession::with('quiz')
-                ->where('id', session()->get('active_quiz_session'))
+                ->where('id', PlayerSession::id())
                 ->first();
         }
 
-        if ($this->enteredSession && $nickname = session("quiz_session.{$this->enteredSession->id}.nickname")) {
+        if ($this->enteredSession && $nickname = PlayerSession::nickname()) {
             $this->nickname = $nickname;
             $this->enteredSession->joinAs($nickname);
 
+            dd(Gate::allows('view', $this->enteredSession));
             return redirect()->route('quiz.enter', $this->enteredSession);
         }
     }

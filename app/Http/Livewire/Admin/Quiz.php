@@ -9,6 +9,12 @@ class Quiz extends Component
 {
     public $session;
 
+    protected function getListeners() {
+        return [
+            "echo:private-Admin.Quiz.{$this->session['id']},PlayerJoined" => 'loadPlayers'
+        ];
+    }
+
     public function render()
     {
         return view('livewire.admin.quiz');

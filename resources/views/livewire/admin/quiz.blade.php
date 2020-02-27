@@ -4,7 +4,7 @@
         <p class="text-5xl font-bold">{{ $session->pin }}</p>
     </div>
     <div class="flex-1">
-        <div class="flex flex-wrap gap-6" wire:poll.2s="loadPlayers">
+        <div class="flex flex-wrap gap-6">
             @foreach ($session->players as $player)
                 <div class="bg-purple-600 rounded py-2 px-4 text-xl font-bold italic">{{ $player->nickname }}</div>
             @endforeach

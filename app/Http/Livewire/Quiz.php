@@ -3,10 +3,13 @@
 namespace App\Http\Livewire;
 
 use App\QuizSession;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 
 class Quiz extends Component
 {
+    use AuthorizesRequests;
+
     public $session;
 
     public function render()
@@ -21,14 +24,11 @@ class Quiz extends Component
         }
     }
 
-    public function loadPlayers()
-    {
-        $this->session->load('players');
-    }
-
     public function mount(QuizSession $quizSession)
     {
-        $this->session = $quizSession->load(['players', 'quiz']);
+        $this->authorize('view', $quizSession);
+
+        $this->session = $quizSession->load(['quiz']);
         $this->redirectIfActive();
     }
 }
