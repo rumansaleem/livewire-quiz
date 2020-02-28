@@ -5,7 +5,6 @@ namespace App\Http\Livewire;
 use App\Events\PlayerJoined;
 use App\PlayerSession;
 use App\QuizSession;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 
@@ -60,7 +59,6 @@ class Home extends Component
             $this->nickname = $nickname;
             $this->enteredSession->joinAs($nickname);
 
-            dd(Gate::allows('view', $this->enteredSession));
             return redirect()->route('quiz.enter', $this->enteredSession);
         }
     }

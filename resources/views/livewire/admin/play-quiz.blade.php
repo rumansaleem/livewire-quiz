@@ -3,7 +3,7 @@
 <div class="container mx-auto flex flex-col min-h-screen">
     <h2 class="text-2xl font-bold text-center my-8">{{$session->quiz->title}}</h2>
     @if (! $showAnswers)
-    <p class="p-6 rounded bg-purple-600 text-2xl font-mono font-bold tracking-wide mb-8" wire:init="pollShowAnswers">{{ $question->text }}</p>
+    <p class="p-6 rounded bg-purple-600 text-2xl font-mono font-bold tracking-wide mb-8">{{ $question->text }}</p>
     <div class="w-full flex-1 grid grid-cols-2 gap-8 content-start">
         @foreach(array_values($question->options) as $key => $option)
         <button

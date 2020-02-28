@@ -18,6 +18,7 @@ class CreateQuestionResponsesTable extends Migration
             $table->unsignedBigInteger('player_id');
             $table->unsignedBigInteger('question_id');
             $table->string('response', 5);
+            $table->unsignedInteger('score')->default(0);
             $table->timestamps();
 
             $table->foreign('player_id')->references('id')->on('quiz_players')->onDelete('cascade');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Admin;
 
+use App\Events\QuizSessionStarted;
 use App\QuizSession;
 use Livewire\Component;
 
@@ -28,6 +29,8 @@ class Quiz extends Component
     public function start()
     {
         $this->session->start();
+
+        event(new QuizSessionStarted($this->session));
 
         return redirect()->route('admin.quiz.play', $this->session);
     }

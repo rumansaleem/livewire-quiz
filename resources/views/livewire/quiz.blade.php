@@ -1,4 +1,4 @@
-<div class="flex flex-col bg-purple-500 text-white justify-center items-center min-h-screen" wire:poll.1s="redirectIfActive">
+<div class="flex flex-col bg-purple-500 text-white justify-center items-center min-h-screen">
     <div class="max-w-md mx-auto text-center p-4">
         <h2 class="text-xl font-bold">{{ $session->quiz->title }}</h2>
     </div>

@@ -12,16 +12,21 @@ class Quiz extends Component
 
     public $session;
 
+    public function getListeners()
+    {
+        return [
+            "echo:Quiz.{$this->session['id']},QuizSessionStarted" => 'redirectToPlay'
+        ];
+    }
+
     public function render()
     {
         return view('livewire.quiz');
     }
 
-    public function redirectIfActive()
+    public function redirectToPlay()
     {
-        if ($this->session->isActive()) {
-            return redirect()->route('quiz.play', $this->session);
-        }
+        return redirect()->route('quiz.play', $this->session);
     }
 
     public function mount(QuizSession $quizSession)
@@ -29,6 +34,9 @@ class Quiz extends Component
         $this->authorize('view', $quizSession);
 
         $this->session = $quizSession->load(['quiz']);
-        $this->redirectIfActive();
+
+        if ($this->session->isActive()) {
+            return $this->redirectToPlay();
+        }
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Events\AnswerReceived;
 use App\PlayerSession;
 use App\QuizSession;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -16,6 +17,14 @@ class PlayQuiz extends Component
     public $question;
     public $response;
     public $player;
+    public $showAnswer = false;
+
+    public function getListeners()
+    {
+        return [
+            "echo:Quiz.{$this->session['id']},QuestionCompleted" => 'showAnswer'
+        ];
+    }
 
     public function render()
     {
@@ -31,6 +40,13 @@ class PlayQuiz extends Component
     public function storeAnswer($answerKey)
     {
         $this->response = $this->player->respond($this->question, $answerKey);
+
+        event(new AnswerReceived($this->session, $this->response));
+    }
+
+    public function showAnswer()
+    {
+        $this->showAnswer = true;
     }
 
     public function mount(QuizSession $quizSession)

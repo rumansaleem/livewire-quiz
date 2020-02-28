@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Admin;
 
+use App\Events\QuestionCompleted;
 use App\QuizSession;
 use Livewire\Component;
 
@@ -11,28 +12,42 @@ class PlayQuiz extends Component
     public $question;
     public $showAnswers = false;
     public $optionPolls = [];
+    public $responses = [];
+
+    public function getListeners()
+    {
+        return [
+            "echo:private-Admin.Quiz.{$this->session['id']},AnswerReceived" => 'addAnswer'
+        ];
+    }
 
     public function render()
     {
         return view('livewire.admin.play-quiz');
     }
 
-    public function pollShowAnswers()
-    {
-        $this->showAnswers = $this->receivedAllResponses();
+    public function addAnswer($response) {
+        array_push($this->responses, $response);
 
-        if ($this->showAnswers) {
-            $this->optionPolls = collect($this->question->options)
-                ->map(function ($text, $key) {
-                    return $this->question->responses
-                        ->where('response', $key)->count();
-                })->toArray();
+        if ($this->showAnswers = $this->receivedAllResponses()) {
+            $this->showAnswers();
         }
     }
 
-    protected function receivedAllResponses()
+    public function showAnswers()
     {
-        return $this->session->players->count() === $this->question->responses->count();
+        event(new QuestionCompleted($this->session, $this->question));
+
+        $this->optionPolls = collect($this->question->options)
+            ->map(function ($text, $key) {
+                return collect($this->responses)
+                    ->where('response', $key)->count();
+            })->toArray();
+    }
+
+    public function receivedAllResponses()
+    {
+        return $this->session->players->count() === count($this->responses);
     }
 
     public function loadResponsesCount()
@@ -44,6 +59,10 @@ class PlayQuiz extends Component
     {
         $this->session = $quizSession->load(['quiz.questions', 'players']);
         $this->question = $quizSession->quiz->questions->get($quizSession->current_question_index, null);
-        $this->question->load('responses');
+        $this->responses = $this->question->responses->toArray();
+
+        if ($this->showAnswers = $this->receivedAllResponses()) {
+            $this->showAnswers();
+        }
     }
 }
