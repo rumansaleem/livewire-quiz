@@ -68,8 +68,8 @@ return [
     'providers' => [
         'admin' => [
             'driver' => 'config',
-            'password' => 'secret',
-            'name' => 'Admin',
+            'password' => env('ADMIN_PASSWORD', 'secret'),
+            'name' => env('ADMIN_NAME', 'Admin'),
         ],
         'users' => [
             'driver' => 'eloquent',
