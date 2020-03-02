@@ -12,6 +12,7 @@ $factory->define(Question::class, function (Faker $faker) {
         'quiz_id' => function() {
             return factory(Quiz::class)->create();
         },
+        'time_limit' => 30, // in seconds
         'options' => array_combine(['a', 'b', 'c', 'd'], $faker->words(4)),
         'correct_key' => $faker->randomElement(['a', 'b', 'c', 'd']),
     ];

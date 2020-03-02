@@ -23,4 +23,9 @@ class PlayerSession
 
         return Session::put('active_quiz_session_nickname', $nickname);
     }
+
+    public static function clear()
+    {
+        Session::forget(['active_quiz_session_nickname', 'active_quiz_session']);
+    }
 }

@@ -17,6 +17,7 @@ class CreateQuestionsTable extends Migration
             $table->bigIncrements('id');
             $table->text('text', 400);
             $table->unsignedBigInteger('quiz_id')->index();
+            $table->unsignedTinyInteger('time_limit');
             $table->json('options');
             $table->string('correct_key', 5);
             $table->timestamps();

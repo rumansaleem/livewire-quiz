@@ -13,6 +13,11 @@ class QuizPlayer extends Model
         return $this->hasMany(QuestionResponse::class, 'player_id');
     }
 
+    public function session()
+    {
+        return $this->belongsTo(QuizSession::class, 'quiz_session_id');
+    }
+
     public function respond($question, $key)
     {
         return $this->responses()->firstOrCreate(

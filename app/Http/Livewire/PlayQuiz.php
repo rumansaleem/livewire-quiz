@@ -18,11 +18,16 @@ class PlayQuiz extends Component
     public $response;
     public $player;
     public $showAnswer = false;
+    public $ended = false;
 
     public function getListeners()
     {
+        // We're using public channel for broadcasting to players,
+        // because we don't want them to have to login to play.
         return [
-            "echo:Quiz.{$this->session['id']},QuestionCompleted" => 'showAnswer'
+            "echo:Quiz.{$this->session['id']},QuestionCompleted" => 'showAnswer',
+            "echo:Quiz.{$this->session['id']},NextQuestion" => 'reload',
+            "echo:Quiz.{$this->session['id']},QuizSessionEnded" => 'endQuiz',
         ];
     }
 
@@ -31,10 +36,15 @@ class PlayQuiz extends Component
         return view('livewire.play-quiz');
     }
 
-    public function loadQuestion()
+    public function reload($data)
     {
-        $this->question = $this->session->quiz->questions->get($this->session->current_question_index, null);
-        $this->response = $this->player->responses()->where('question_id', $this->question->id)->first();
+        $this->redirect(route('quiz.play', $this->session));
+    }
+
+    public function endQuiz()
+    {
+        $this->ended = true;
+        PlayerSession::clear();
     }
 
     public function storeAnswer($answerKey)
@@ -46,6 +56,7 @@ class PlayQuiz extends Component
 
     public function showAnswer()
     {
+        $this->response = $this->response->fresh();
         $this->showAnswer = true;
     }
 
@@ -57,8 +68,17 @@ class PlayQuiz extends Component
 
         $this->player = $quizSession->players()->whereNickname(
             PlayerSession::nickname()
-        )->first();
+        )->firstOrFail();
 
-        $this->loadQuestion();
+        $this->question = $this->session->quiz->questions
+            ->get($this->session->current_question_index, null);
+
+        $this->response = $this->player->responses()
+            ->where('question_id', $this->question->id)
+            ->first();
+
+        if ($this->response && $this->response->score !== null) {
+            $this->showAnswer();
+        }
     }
 }

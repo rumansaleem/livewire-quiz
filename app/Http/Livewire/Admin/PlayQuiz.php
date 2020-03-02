@@ -36,6 +36,12 @@ class PlayQuiz extends Component
 
     public function showAnswers()
     {
+        $this->responses = $this->session->responses()
+            ->whereQuestionId($this->question->id)
+            ->get();
+
+        $this->responses->map->evaluate();
+
         event(new QuestionCompleted($this->session, $this->question));
 
         $this->optionPolls = collect($this->question->options)
@@ -58,8 +64,17 @@ class PlayQuiz extends Component
     public function mount(QuizSession $quizSession)
     {
         $this->session = $quizSession->load(['quiz.questions', 'players']);
+
+        if ($quizSession->current_question_index === null || $quizSession->ended_at) {
+            $this->question = $quizSession->quiz->questions->last();
+            return redirect(route('admin.quiz.leaderboard', $quizSession));
+        }
+
         $this->question = $quizSession->quiz->questions->get($quizSession->current_question_index, null);
-        $this->responses = $this->question->responses->toArray();
+
+        $this->responses = $quizSession->responses()
+            ->where('question_id', $this->question)
+            ->get()->toArray();
 
         if ($this->showAnswers = $this->receivedAllResponses()) {
             $this->showAnswers();
