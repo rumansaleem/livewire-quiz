@@ -56,7 +56,7 @@ class PlayQuiz extends Component
 
     public function showAnswer()
     {
-        $this->response = $this->response->fresh();
+        $this->response = optional($this->response)->fresh();
         $this->showAnswer = true;
     }
 

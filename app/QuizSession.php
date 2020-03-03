@@ -100,13 +100,23 @@ class QuizSession extends Model
         return $this->hasManyThrough(QuestionResponse::class, QuizPlayer::class, 'quiz_session_id', 'player_id');
     }
 
+    public function currentQuestion()
+    {
+        $index = $this->current_question_index;
+
+        return $this->quiz->questions->get($index, null);
+    }
+
     public function currentResponses()
     {
-        if(! $this->quiz) {
-            dd($this);
-        }
-
         $currentQuestion = $this->quiz->questions[$this->current_question_index];
         return $this->responses()->where('question_id', $currentQuestion->id);
+    }
+
+    public function hasTimedOut()
+    {
+        return $this->ended_at
+            || ! $this->next_question_at
+            || $this->next_question_at < now();
     }
 }

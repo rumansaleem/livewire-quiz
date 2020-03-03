@@ -20,6 +20,13 @@ class QuizPlayer extends Model
 
     public function respond($question, $key)
     {
+        if (
+            ! $question->is($this->session->currentQuestion())
+            || $this->session->hasTimedOut()
+        ) {
+            return false;
+        }
+
         return $this->responses()->firstOrCreate(
             ['question_id' => $question->id],
             ['response' => $key]

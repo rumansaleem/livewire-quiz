@@ -10,7 +10,7 @@
             <p class="font-bold text-3xl italic">{{ $player->score }}</p>
         </div>
         <div class="text-5xl font-bold mb-4 p-4">
-            @if($response->response === $question->correct_key) &check; @else &times; @endif
+            @if($response && $response->response === $question->correct_key) &check; @else &times; @endif
         </div>
         <div class="text-xl font-bold">
             @if(! $response )

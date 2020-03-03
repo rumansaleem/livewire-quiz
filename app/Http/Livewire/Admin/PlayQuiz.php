@@ -13,6 +13,7 @@ class PlayQuiz extends Component
     public $showAnswers = false;
     public $optionPolls = [];
     public $responses = [];
+    public $timeLeft = 0;
 
     public function getListeners()
     {
@@ -26,16 +27,19 @@ class PlayQuiz extends Component
         return view('livewire.admin.play-quiz');
     }
 
-    public function addAnswer($response) {
+    public function addAnswer($response)
+    {
         array_push($this->responses, $response);
 
-        if ($this->showAnswers = $this->receivedAllResponses()) {
-            $this->showAnswers();
-        }
+        $this->showAnswersIfRequired();
     }
 
-    public function showAnswers()
+    public function showAnswersIfRequired()
     {
+        if (! $this->shouldShowAnswers()) {
+            return;
+        }
+
         $this->responses = $this->session->responses()
             ->whereQuestionId($this->question->id)
             ->get();
@@ -51,14 +55,29 @@ class PlayQuiz extends Component
             })->toArray();
     }
 
+    public function shouldShowAnswers()
+    {
+        return $this->showAnswers = ($this->timeLimitElapsed() || $this->receivedAllResponses());
+    }
+
     public function receivedAllResponses()
     {
         return $this->session->players->count() === count($this->responses);
     }
 
-    public function loadResponsesCount()
+    public function timeLimitElapsed()
     {
-        $this->question->load('responses');
+        $this->calculateTimeLeft();
+        return $this->timeLeft <= 0;
+    }
+
+    public function calculateTimeLeft()
+    {
+        $this->timeLeft = now()->diffInSeconds($this->session->next_question_at, false);
+
+        if ($this->timeLeft <= 0) {
+            $this->timeLeft = 0;
+        }
     }
 
     public function mount(QuizSession $quizSession)
@@ -76,8 +95,6 @@ class PlayQuiz extends Component
             ->where('question_id', $this->question)
             ->get()->toArray();
 
-        if ($this->showAnswers = $this->receivedAllResponses()) {
-            $this->showAnswers();
-        }
+        $this->showAnswersIfRequired();
     }
 }
