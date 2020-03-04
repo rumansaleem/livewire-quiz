@@ -9,10 +9,34 @@ use Livewire\Component;
 class Home extends Component
 {
     public $quizzes = [];
+    public $creating = false;
+    public $quizTitle = '';
 
     public function render()
     {
         return view('livewire.admin.home');
+    }
+
+    public function createQuiz()
+    {
+        $this->validate([
+            'quizTitle' => 'required|string|min:5|max:190'
+        ]);
+
+        $quiz = Quiz::create(['title' => $this->quizTitle]);
+
+        $this->quizTitle = '';
+
+        $this->quizzes->put($quiz->id, $quiz);
+
+        $this->emit('creatingStatus', false);
+    }
+
+    public function deleteQuiz($quizId)
+    {
+        $this->quizzes->get($quizId, optional())->delete();
+
+        $this->quizzes->forget($quizId);
     }
 
     public function startSession($quizId)

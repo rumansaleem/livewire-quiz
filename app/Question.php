@@ -11,6 +11,8 @@ class Question extends Model
         'options' => 'array'
     ];
 
+    protected $guarded = [];
+
     public static function boot()
     {
         parent::boot();

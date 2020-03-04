@@ -91,8 +91,17 @@ class QuizSession extends Model
 
     public function isActive()
     {
-        return $this->started_at && $this->started_at <= now()
-            && ! $this->ended_at;
+        return $this->started_at && ! $this->ended_at;
+    }
+
+    public function isFresh()
+    {
+        return ! $this->started_at && ! $this->ended_at;
+    }
+
+    public function isStale()
+    {
+        return $this->started_at && $this->ended_at;
     }
 
     public function responses()

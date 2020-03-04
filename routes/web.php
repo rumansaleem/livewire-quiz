@@ -16,6 +16,7 @@ Route::layout('layouts.master')
     ->middleware('auth.basic')
     ->group(function () {
         Route::livewire('/', 'admin.home')->name('admin.home');
+        Route::livewire('/manage/quizzes/{quiz}', 'admin.manage-quiz')->name('admin.quizzes.manage');
         Route::livewire('/quiz/{quizSession}', 'admin.quiz')->name('admin.quiz.start');
         Route::livewire('/quiz/{quizSession}/play', 'admin.play-quiz')->name('admin.quiz.play');
         Route::livewire('/quiz/{quizSession}/leaderboard', 'admin.quiz-leaderboard')->name('admin.quiz.leaderboard');
