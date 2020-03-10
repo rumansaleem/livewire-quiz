@@ -2,11 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Events\PlayerJoined;
 use App\Http\Livewire\Home as LivewireHome;
 use App\Quiz;
 use App\QuizPlayer;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -17,6 +19,8 @@ class LivewireQuizTest extends TestCase
     /** @test */
     public function user_can_join_the_quiz_by_entering_pin_and_nickname()
     {
+        Event::fake();
+
         $quiz = factory(Quiz::class)->create();
 
         $session = $quiz->startSession($pin = '123456');
@@ -29,6 +33,8 @@ class LivewireQuizTest extends TestCase
             ->set('nickname', 'john')
             ->call('ready')
             ->assertRedirect(route('quiz.enter', $session));
+
+        Event::assertDispatched(PlayerJoined::class);
 
         $this->assertEquals(1, QuizPlayer::count());
         $this->assertEquals('john', QuizPlayer::first()->nickname);

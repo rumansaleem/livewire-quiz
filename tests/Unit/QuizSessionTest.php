@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Question;
 use App\Quiz;
 use App\QuizPlayer;
 use App\QuizSession;
@@ -44,24 +45,27 @@ class QuizSessionTest extends TestCase
         $this->assertTrue($player->is($session->fresh()->players->first()));
     }
 
-    public function test_ready_method_adds_ready_at_clears_pin()
+    public function test_start_method_adds_started_at_clears_pin_initialise_first_question()
     {
         $session = factory(QuizSession::class)->create();
+        factory(Question::class)->create(['quiz_id' => $session->quiz_id]);
 
-        $session->ready();
+        $session->start();
 
-        $this->assertEqualsWithDelta(now(), $session->ready_at, 1);
+        $this->assertEqualsWithDelta(now(), $session->started_at, 1);
         $this->assertNull($session->pin);
+        $this->assertEquals(0, $session->current_question_index);
     }
 
-    public function test_is_ready_method()
+    public function test_is_active_method()
     {
         $session = factory(QuizSession::class)->create();
 
-        $this->assertFalse($session->isReady());
+        $this->assertFalse($session->isActive());
+        factory(Question::class)->create(['quiz_id' => $session->quiz_id ]);
 
-        $session->ready();
+        $session->start();
 
-        $this->assertTrue($session->isReady());
+        $this->assertTrue($session->isActive());
     }
 }

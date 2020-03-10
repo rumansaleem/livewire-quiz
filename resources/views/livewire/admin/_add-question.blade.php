@@ -46,8 +46,10 @@
                 wire:model="correctOptionIndex"
                 @change="@this.set('correctOptionIndex', $event.target.value)">
                 @foreach($options as $option)
-                <option value="{{ $loop->index }}" wire:key="{{$loop->index + 1}}-option"
-                    {{ $loop->index === (int) $correctOptionIndex ? 'selected' : '' }}>
+                <option value="{{ $loop->index }}"
+                    wire:key="{{$loop->index + 1}}-option"
+                    {{ $loop->index === (int) $correctOptionIndex ? 'selected' : '' }}
+                    >
                     {{ $this->keys($loop->index) }}) {{ $option }}
                 </option>
                 @endforeach
