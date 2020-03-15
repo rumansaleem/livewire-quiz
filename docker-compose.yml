@@ -1,0 +1,67 @@
+version: '3'
+
+services:
+  #  The Application
+  app:
+    container_name: livequiz_app
+    build:
+      context: ./
+      dockerfile: docker/app.dockerfile
+    volumes:
+      - ./storage:/var/www/storage
+    depends_on:
+      - database
+    environment:
+      - "DB_HOST=database"
+      - "REDIS_HOST=cache"
+    expose:
+      - 9000
+
+  websocket:
+    container_name: livequiz_websocket
+    build:
+      context: ./
+      dockerfile: docker/websocket.dockerfile
+    depends_on:
+      - app
+    volumes:
+      - ./docker/supervisord.d:/etc/supervisord.d
+    expose:
+      - 6001
+    ports:
+      - 6001:6001
+  # The Web Server
+  web:
+    container_name: nginx_server
+    build:
+      context: ./
+      dockerfile: docker/web.dockerfile
+    depends_on:
+      - app
+    volumes:
+      - ./storage/logs/:/var/log/nginx
+    ports:
+      - 8888:80
+
+  # The Database
+  database:
+    container_name: mysql_database
+    image: mysql:5.7
+    volumes:
+      - dbdata:/var/lib/mysql
+    environment:
+      - "MYSQL_DATABASE=livequiz"
+      - "MYSQL_USER=livequiz_user"
+      - "MYSQL_PASSWORD=livequiz_db_secret"
+      - "MYSQL_ROOT_PASSWORD=secret"
+    expose:
+      - 3306
+    ports:
+      - 33060:3306
+
+  # Redis
+  cache:
+    image: redis:3.0-alpine
+
+volumes:
+  dbdata:
